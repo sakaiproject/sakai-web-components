@@ -1,0 +1,32 @@
+{
+  "name": "sakai-web-components",
+  "version": "1.0.0",
+  "description": "",
+  "main": "sakai-course-card.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "storybook": "start-storybook -p 6006",
+    "build-storybook": "build-storybook"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sakaiproject/sakai-web-components.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/sakaiproject/sakai-web-components/issues"
+  },
+  "homepage": "https://github.com/sakaiproject/sakai-web-components#readme",
+  "devDependencies": {
+    "@babel/core": "^7.10.2",
+    "@storybook/addon-actions": "^5.3.19",
+    "@storybook/addon-knobs": "^5.3.19",
+    "@storybook/web-components": "^5.3.19",
+    "babel-loader": "^8.1.0"
+  },
+  "dependencies": {
+    "lit-html": "^1.2.1"
+  }
+}
