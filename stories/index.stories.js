@@ -14,8 +14,7 @@ export const Heading = () => html`
 
 export const SettingProperties = () => {
 
-  let el = document.createElement("sakai-course-card");
-  el.setAttribute("title", text('title', 'Course Title'));
-  el.setAttribute("code", text('code', 'Course Code'));
-  return el;
+  return html`
+    <sakai-course-card course-title="${text('course-title', 'Course Title')}" course-code="${text('course-code', 'Course Code')}" />
+  `;
 };

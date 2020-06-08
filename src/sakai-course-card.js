@@ -1,6 +1,6 @@
 import { html, css, LitElement } from 'lit-element';
-import { dom, library } from '@fortawesome/fontawesome-svg-core';
-import { faStar, faEllipsisV, faBell, faComments } from '@fortawesome/free-solid-svg-icons';
+import './sakai-icon.js';
+import './sakai-options-menu.js';
 
 export class SakaiCourseCard extends LitElement {
 
@@ -11,9 +11,6 @@ export class SakaiCourseCard extends LitElement {
         display: block;
         width: var(--sakai-course-card-width, 240px);
       }
-      .sakai-icon { width: var(--sakai-icon-width, 24px); height: var(--sakai-icon-height), 24px) }
-      .sakai-disclose-icon { height: var(--sakai-disclose-icon-width, 14px) }
-      .sakai-tool-alert-icon { color: green; width: var(--sakai-icon-width, 14px); height: var(--sakai-icon-height), 14px) }
       .course-block { border: black 1px solid; border-bottom: 0; border-radius: 5px 5px 0px 0px; padding: 5px; background-color: lightgray; }
       .top-bar { display: flex; justify-content: space-between;}
       .title-block { flex: 2 }
@@ -27,28 +24,45 @@ export class SakaiCourseCard extends LitElement {
   static get properties() {
 
     return {
-      title: String,
-      code: String,
+      courseTitle: { attribute: "course-title", type: String },
+      courseCode: { attribute: "course-code", type: String },
+      alerts: { type: Array },
     };
   }
 
   constructor() {
 
     super();
-    library.add(faEllipsisV);
-    library.add(faStar);
-    library.add(faBell);
-    library.add(faComments);
-    dom.watch({
-      autoReplaceSvgRoot: this.shadowRoot,
-      observeMutationsRoot: this.shadowRoot
-    });
-    this.title = 'Course Title';
-    this.code = 'Course Code';
+
+    this.courseTitle = 'Course Title';
+    this.courseCode = 'Course Code';
+    this.alerts = ["assignments", "gradebook"];
+
+    this.toolnameMap = {
+      'assignments': 'Assignments',
+      'gradebook': 'Gradebook',
+      'forums': 'Forums',
+    };
   }
 
-  __showOptions(e) {
-    console.log('__showOptions');
+  _toolClicked(e) {
+
+    e.stopPropagation();
+    if (e.target.checked) {
+      if (!this.alerts.includes(e.target.value)) {
+        this.alerts.push(e.target.value);
+        this.alerts = [ ...this.alerts ];
+        console.log(this.alerts);
+      }
+    } else {
+      if (this.alerts.includes(e.target.value)) {
+        this.alerts.splice(this.alerts.indexOf(e.target.value), 1);
+        this.alerts = [ ...this.alerts ];
+        console.log(this.alerts);
+      }
+    }
+
+    return false;
   }
 
   render() {
@@ -57,16 +71,22 @@ export class SakaiCourseCard extends LitElement {
       <div class="course-block">
         <div class="top-bar">
           <div class="title-block">
-            <i class="fas fa-star sakai-icon"></i>
-            <span>${this.title}</span>
+            <sakai-icon type="favourite"></sakai-icon>
+            <span>${this.courseTitle}</span>
           </div>
-          <div class="disclose-block"><a href="javascript:;" @click=${this.__showOptions}><i class="fas fa-ellipsis-v sakai-disclose-icon"></i></a></div>
+          <sakai-options-menu>
+            <div slot="content">
+              <div>Select tools to display:</div>
+              ${Object.keys(this.toolnameMap).map(k => html`
+                <div><input type="checkbox" value="${k}" .checked=${this.alerts.includes(k)} @click=${this._toolClicked} />${this.toolnameMap[k]}</div>
+              `)}
+            </div>
+          </sakai-options-menu>
         </div>
-        <div class="code-block">${this.code}</div>
+        <div class="code-block">${this.courseCode}</div>
       </div>
       <div class="tool-alerts-block">
-      <div><i class="fas fa-bell sakai-tool-alert-icon"></i></div>
-      <div><i class="fas fa-comments sakai-tool-alert-icon"></i></div>
+        ${this.alerts.map(a => html`<div><sakai-icon type="${a}" size="small" /></div>`)}
       </div>
     `;
   }
