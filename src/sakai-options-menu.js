@@ -13,6 +13,12 @@ export class SakaiOptionsMenu extends LitElement {
         border-width: var(--sakai-options-menu-border-width, 1px);
         border-style: var(--sakai-options-menu-border-style, solid);
         border-color: var(--sakai-options-menu-border-color, black);
+        font-family: var(--sakai-options-menu-font-family, arial, sans-serif);
+        padding: 5px;
+      }
+      #invoker {
+        color: var(--sakai-options-menu-invoker-color, white);
+        font-size: var(--sakai-options-menu-invoker-size, 24px);
       }
     `;
   }
@@ -29,7 +35,6 @@ export class SakaiOptionsMenu extends LitElement {
 
     super();
     this.placement = "right";
-    this.invoker = `sakai-options-invoker-${Math.floor(Math.random() * Math.floor(1000))}`;
   }
 
   firstUpdated(changed) {
@@ -37,10 +42,17 @@ export class SakaiOptionsMenu extends LitElement {
     this.content = this.shadowRoot.querySelector('slot[name="content"]').assignedNodes()[0];
     this.content.addEventListener("keydown", (e) => this._handleEscape(e));
 
-    this.invoker = this.shadowRoot.querySelector(`#${this.invoker}`);
+    this.invoker = this.shadowRoot.querySelector("#invoker");
     this.invoker.addEventListener("keydown", (e) => this._handleEscape(e));
 
-    createPopper(this.invoker, this.content, { placement: this.placement });
+    createPopper(this.invoker, this.content,
+      {
+        placement: this.placement,
+        modifiers: [
+          { name: 'offset', options: { offset: [0, 8] }},
+        ]
+      }
+    );
   }
 
   _handleEscape(e) {
@@ -65,7 +77,7 @@ export class SakaiOptionsMenu extends LitElement {
   render() {
 
     return html`
-      <a href="javascript:;" @click=${this._toggle} id="${this.invoker}"><sakai-icon type="menu" size="small" /></a>
+      <a id="invoker" href="javascript:;" @click=${this._toggle}><sakai-icon type="menu" size="small" /></a>
       <slot name="content"></slot>
     `;
   }
